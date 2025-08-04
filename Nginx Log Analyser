@@ -1,0 +1,23 @@
+#!/bin/bash
+
+LOGFILE="access.log"
+
+if [[ ! -f "$LOGFILE" ]]; then
+  echo "Logfájl nem található: $LOGFILE"
+  exit 1
+fi
+
+echo "Top 5 IP-cím a legtöbb kéréssel:"
+awk '{print $1}' "$LOGFILE" | sort | uniq -c | sort -nr | head -5 | awk '{print $2 " - " $1 " kérés"}'
+
+echo ""
+echo "Top 5 leggyakrabban kért útvonal:"
+awk -F\" '{print $2}' "$LOGFILE" | awk '{print $2}' | sort | uniq -c | sort -nr | head -5 | awk '{print $2 " - " $1 " kérés"}'
+
+echo ""
+echo "Top 5 válaszkód:"
+awk '{print $9}' "$LOGFILE" | sort | uniq -c | sort -nr | head -5 | awk '{print $2 " - " $1 " kérés"}'
+
+echo ""
+echo "Top 5 user agent:"
+awk -F\" '{print $6}' "$LOGFILE" | sort | uniq -c | sort -nr | head -5 | awk '{print $2 " - " $1 " kérés"}'
